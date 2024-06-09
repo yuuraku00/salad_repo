@@ -5,8 +5,9 @@ import datetime
 import calendar
 import openai
 
-# Streamlit secretsからAPIキーを取得
+# Streamlit secretsからAPIキーと設定を取得
 openai.api_key = st.secrets["OpenAIAPI"]["openai_api_key"]
+chatbot_setting = st.secrets["AppSettings"]["chatbot_setting"]
 
 # データフレームの初期化
 @st.cache(allow_output_mutation=True)
@@ -16,8 +17,7 @@ def get_data():
 data = get_data()
 
 def generate_comment(intake):
-    target = 350  # 一日のサラダ摂取量の目安（グラム）
-    prompt = f"Today's salad intake is {intake} grams. The recommended daily intake is {target} grams. Please provide an encouraging comment based on this intake to motivate the person to eat more salad."
+    prompt = f"{chatbot_setting}\n\nToday's salad intake is {intake} grams. Please provide a positive and encouraging comment."
 
     response = openai.Completion.create(
         engine="text-davinci-003",
