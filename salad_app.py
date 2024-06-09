@@ -17,7 +17,7 @@ data = get_data()
 
 def generate_comment(intake):
     target = 350  # 一日のサラダ摂取量の目安（グラム）
-    prompt = f"Today's salad intake is {intake} grams. The recommended daily intake is {target} grams. Please provide a comment based on this intake."
+    prompt = f"Today's salad intake is {intake} grams. The recommended daily intake is {target} grams. Please provide an encouraging comment based on this intake to motivate the person to eat more salad."
 
     response = openai.Completion.create(
         engine="text-davinci-003",
