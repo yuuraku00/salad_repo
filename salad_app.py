@@ -27,7 +27,7 @@ def generate_comment(intake):
         ]
     )
 
-    comment = response.choices[0].message['content'].strip()
+    comment = response['choices'][0]['message']['content'].strip()
     return comment
 
 # ログインセクション
@@ -66,7 +66,7 @@ if employee_id:
             st.write("この表は各月のサラダ摂取量を積み上げで折れ線グラフにしています")
             fig, ax = plt.subplots()
             ax.plot(user_data.index, user_data["累計摂取グラム数"], marker='o', linestyle='-')
-            ax.set_title("サラダ摂取量月間累計グラフ")
+            ax.set_title("graph")
             ax.set_xlabel("date")
             ax.set_ylabel("(g)")
             st.pyplot(fig)
