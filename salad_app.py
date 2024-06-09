@@ -10,7 +10,7 @@ openai.api_key = st.secrets["OpenAIAPI"]["openai_api_key"]
 chatbot_setting = st.secrets["AppSettings"]["chatbot_setting"]
 
 # データフレームの初期化
-@st.cache(allow_output_mutation=True)
+@st.cache_data(allow_output_mutation=True)
 def get_data():
     return pd.DataFrame(columns=["職員番号", "日付", "摂取グラム数"])
 
@@ -19,13 +19,15 @@ data = get_data()
 def generate_comment(intake):
     prompt = f"{chatbot_setting}\n\nToday's salad intake is {intake} grams. Please provide a positive and encouraging comment."
 
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=50
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
     )
 
-    comment = response.choices[0].text.strip()
+    comment = response.choices[0].message['content'].strip()
     return comment
 
 # ログインセクション
