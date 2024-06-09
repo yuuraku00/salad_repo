@@ -20,7 +20,7 @@ def generate_comment(intake):
     prompt = f"{chatbot_setting}\n\nToday's salad intake is {intake} grams. Please provide a positive and encouraging comment."
 
     response = openai.Completion.create(
-        engine="text-davinci-003",
+        model="text-davinci-003",
         prompt=prompt,
         max_tokens=50
     )
@@ -46,8 +46,11 @@ if employee_id:
         st.success("記録が追加されました")
 
         # OpenAI APIを使ってコメントを生成
-        comment = generate_comment(intake)
-        st.write(comment)
+        try:
+            comment = generate_comment(intake)
+            st.write(comment)
+        except Exception as e:
+            st.error(f"コメントの生成に失敗しました: {e}")
 
     # 月間累計摂取量の表示
     if not data.empty:
