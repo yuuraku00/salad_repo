@@ -123,4 +123,3 @@ if employee_id:
         # 自分のデータを強調表示
         monthly_rank["順位"] = monthly_rank.index + 1
         st.dataframe(monthly_rank.style.apply(lambda x: ["background-color: yellow" if x["職員番号"] == employee_id else "" for i in x], axis=1))
-
