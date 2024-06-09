@@ -10,7 +10,7 @@ openai.api_key = st.secrets["OpenAIAPI"]["openai_api_key"]
 chatbot_setting = st.secrets["AppSettings"]["chatbot_setting"]
 
 # データフレームの初期化
-@st.cache_data(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def get_data():
     return pd.DataFrame(columns=["職員番号", "日付", "摂取グラム数"])
 
