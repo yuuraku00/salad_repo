@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
 import calendar
-import matplotlib.font_manager as fm
 
 # データフレームの初期化
 @st.cache(allow_output_mutation=True)
@@ -20,7 +19,7 @@ if employee_id:
     st.write(f"職員番号: {employee_id}")
 
     # 毎日の摂取量記録
-    intake = st.number_input("今日のサラダ摂取量 (グラム)", min_value=0)
+    intake = st.number_input("今日のサラダ摂取量 (グラム)を入力してください", min_value=0)
     record_button = st.button("記録")
 
     if record_button:
@@ -42,12 +41,13 @@ if employee_id:
             fig, ax = plt.subplots()
             ax.plot(user_data.index, user_data["累計摂取グラム数"], marker='o', linestyle='-')
             ax.set_title("月間累計摂取量")
-            ax.set_xlabel("日付")
-            ax.set_ylabel("累計摂取グラム数")
+            ax.set_xlabel("date")
+            ax.set_ylabel("(g)")
             st.pyplot(fig)
 
             # カレンダー表示
             st.write("摂取日カレンダー")
+            st.write("サラダを食べた日に印が付きます。サラダ習慣を身につけましょう。")
             current_month = datetime.date.today().replace(day=1)
             first_day, last_day = calendar.monthrange(current_month.year, current_month.month)
             days = pd.date_range(start=current_month, periods=last_day, freq='D')
@@ -83,6 +83,7 @@ if employee_id:
     # ランキング表示
     if not data.empty:
         st.write("月間サラダ摂取量ランキング")
+        st.write("あなたの今月のサラダ摂取量の累計が、社内でどれくらいの位置にいるかがわかります。社内ランキングを見て、社内の仲間と一緒に盛り上がりましょう。")
         monthly_rank = data.groupby(["職員番号", data["日付"].dt.to_period("M")])["摂取グラム数"].sum().reset_index()
         monthly_rank = monthly_rank.groupby("職員番号")["摂取グラム数"].sum().sort_values(ascending=False).reset_index()
 
