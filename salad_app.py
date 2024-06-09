@@ -3,6 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
 import calendar
+import openai
+
+# Streamlit secretsからAPIキーを取得
+openai.api_key = st.secrets["OpenAIAPI"]["openai_api_key"]
 
 # データフレームの初期化
 @st.cache(allow_output_mutation=True)
@@ -10,6 +14,19 @@ def get_data():
     return pd.DataFrame(columns=["職員番号", "日付", "摂取グラム数"])
 
 data = get_data()
+
+def generate_comment(intake):
+    target = 350  # 一日のサラダ摂取量の目安（グラム）
+    prompt = f"Today's salad intake is {intake} grams. The recommended daily intake is {target} grams. Please provide a comment based on this intake."
+
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=50
+    )
+
+    comment = response.choices[0].text.strip()
+    return comment
 
 # ログインセクション
 st.title("サラダ摂取量記録アプリ")
@@ -28,6 +45,10 @@ if employee_id:
         data.to_csv("salad_intake.csv", index=False)
         st.success("記録が追加されました")
 
+        # OpenAI APIを使ってコメントを生成
+        comment = generate_comment(intake)
+        st.write(comment)
+
     # 月間累計摂取量の表示
     if not data.empty:
         data["日付"] = pd.to_datetime(data["日付"])
@@ -40,7 +61,7 @@ if employee_id:
             st.write("この表は各月のサラダ摂取量を積み上げで折れ線グラフにしています")
             fig, ax = plt.subplots()
             ax.plot(user_data.index, user_data["累計摂取グラム数"], marker='o', linestyle='-')
-            ax.set_title("月間累計摂取量")
+            ax.set_title("サラダ摂取量月間累計グラフ")
             ax.set_xlabel("date")
             ax.set_ylabel("(g)")
             st.pyplot(fig)
