@@ -3,11 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
 import calendar
-import openai
-
-# Streamlit secretsからAPIキーと設定を取得
-openai.api_key = st.secrets["OpenAIAPI"]["openai_api_key"]
-chatbot_setting = st.secrets["AppSettings"]["chatbot_setting"]
 
 # データフレームの初期化
 @st.cache(allow_output_mutation=True)
@@ -15,20 +10,6 @@ def get_data():
     return pd.DataFrame(columns=["職員番号", "日付", "摂取グラム数"])
 
 data = get_data()
-
-def generate_comment(intake):
-    prompt = f"{chatbot_setting}\n\nToday's salad intake is {intake} grams. Please provide a positive and encouraging comment."
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt}
-        ]
-    )
-
-    comment = response['choices'][0]['message']['content'].strip()
-    return comment
 
 # ログインセクション
 st.title("サラダ摂取量記録アプリ")
@@ -46,13 +27,6 @@ if employee_id:
         data = pd.concat([data, pd.DataFrame([new_record])], ignore_index=True)
         data.to_csv("salad_intake.csv", index=False)
         st.success("記録が追加されました")
-
-        # OpenAI APIを使ってコメントを生成
-        try:
-            comment = generate_comment(intake)
-            st.write(comment)
-        except Exception as e:
-            st.error(f"コメントの生成に失敗しました: {e}")
 
     # 月間累計摂取量の表示
     if not data.empty:
